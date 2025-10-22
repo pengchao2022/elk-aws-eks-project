@@ -49,7 +49,7 @@ kubectl exec -it elasticsearch-0 -n logging -- curl -s "localhost:9200/_cat/indi
 kubectl logs filebeat-pf8wt -n logging
 ```
 
-![logs](./assets/logo.jpg)
+![logs](./filebeat_log_connect_elastisearch.png)
 
 - Kibana Home page
 
