@@ -1,4 +1,4 @@
-# ELK-Logging-Deploy-AWS-EKS
+# ELK-Logging-Sys-Deploy-To-AWS-EKS
 
 In this demo, I will show you how to deply ELK (Elastisearch,Logstash,Kibana) to AWS EKS for a logging system. For a security concern, I also using a domain named awsmpc.asia and using ACM for HTTPS connection, I also deployed ALB for kibana client access.
 
