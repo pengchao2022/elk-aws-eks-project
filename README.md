@@ -68,3 +68,5 @@ kubectl logs filebeat-pf8wt -n logging
 - Pod details check
 
 ![Pod_details](./pod_log_details.png)
+
+Designed and Developed by Ma Pengchao @2025
