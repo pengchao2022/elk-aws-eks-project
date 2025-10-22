@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: logging
+  labels:
+    k8s-app: filebeat
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filebeat
+  labels:
+    k8s-app: filebeat
+rules:
+  # 允许访问集群级别的资源
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - namespaces
+      - events
+      - configmaps
+    verbs: ["get", "list", "watch"]
+  
+  # 允许访问 Pod 信息
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/logs
+    verbs: ["get", "list", "watch"]
+  
+  # 允许访问节点指标
+  - apiGroups: [""]
+    resources:
+      - nodes/stats
+    verbs: ["get"]
+  
+  # 如果使用 Kubernetes 元数据，需要这些权限
+  - apiGroups: [""]
+    resources:
+      - services
+    verbs: ["get", "list", "watch"]
+  
+  # 对于扩展 API 的支持
+  - apiGroups: ["extensions"]
+    resources:
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets
+      - deployments
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  
+  # 对于自动发现功能
+  - apiGroups: [""]
+    resources:
+      - services
+      - pods
+    verbs: ["get", "list", "watch"]
+  
+  # 允许访问端点
+  - apiGroups: [""]
+    resources:
+      - endpoints
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filebeat
+subjects:
+  - kind: ServiceAccount
+    name: filebeat
+    namespace: logging
+roleRef:
+  kind: ClusterRole
+  name: filebeat
+  apiGroup: rbac.authorization.k8s.io

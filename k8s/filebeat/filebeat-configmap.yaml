@@ -1,0 +1,31 @@
+# k8s/filebeat/filebeat-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+  namespace: logging
+  labels:
+    app: filebeat
+data:
+  filebeat.yml: |
+    # 基础配置
+    filebeat.inputs:
+    - type: log
+      paths:
+        - /var/log/containers/*.log
+      symlinks: true
+      ignore_older: 24h
+      fields:
+        log_type: "kubernetes"
+
+    # 输出配置
+    output.elasticsearch:
+      hosts: ['elasticsearch-service:9200']
+      index: "filebeat-%{+yyyy.MM.dd}"
+    
+    # 禁用管理功能
+    setup.template.enabled: false
+    setup.ilm.enabled: false
+    
+    # 日志配置
+    logging.level: info

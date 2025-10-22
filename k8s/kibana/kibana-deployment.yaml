@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana:7.0.0
+        env:
+        - name: ELASTICSEARCH_HOSTS
+          value: "http://elasticsearch-service:9200"
+        - name: SERVER_PUBLICBASEURL
+          value: "https://kibana.awsmpc.asia"
+        - name: SERVER_HOST
+          value: "0.0.0.0"
+        - name: XPACK_SECURITY_ENABLED
+          value: "false"
+        - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
+          value: "CSNlxfQVO0tSNMuPA+tn9tJieNgmeN1t"
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=1536"
+        ports:
+        - containerPort: 5601
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/status
+            port: 5601
+          initialDelaySeconds: 300    # 10分钟后开始检查
+          periodSeconds: 60           # 每60秒检查一次
+          timeoutSeconds: 10          # 10秒超时
+          failureThreshold: 5         # 失败5次才重启
+        readinessProbe:
+          httpGet:
+            path: /api/status
+            port: 5601
+          initialDelaySeconds: 180    # 5分钟后开始检查
+          periodSeconds: 30           # 每30秒检查一次
+          timeoutSeconds: 10          # 10秒超时
+          failureThreshold: 10        # 失败10次才标记为未就绪
